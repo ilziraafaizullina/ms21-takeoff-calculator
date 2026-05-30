@@ -1,0 +1,40 @@
+<Application x:Class="MS21TakeoffCalculator.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="Views/MainWindow.xaml">
+  <Application.Resources>
+    <Style x:Key="SectionTitle" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="18" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="#102033" />
+      <Setter Property="Margin" Value="0,0,0,14" />
+    </Style>
+
+    <Style TargetType="TextBlock">
+      <Setter Property="Foreground" Value="#29394A" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style TargetType="TextBox">
+      <Setter Property="Height" Value="34" />
+      <Setter Property="Padding" Value="8,4" />
+      <Setter Property="BorderBrush" Value="#AEB9C6" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <Style TargetType="ComboBox">
+      <Setter Property="Height" Value="34" />
+      <Setter Property="Padding" Value="6,3" />
+      <Setter Property="BorderBrush" Value="#AEB9C6" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="ReadonlyTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+      <Setter Property="IsReadOnly" Value="True" />
+      <Setter Property="Background" Value="#EFF3F7" />
+      <Setter Property="Foreground" Value="#38495A" />
+    </Style>
+  </Application.Resources>
+</Application>

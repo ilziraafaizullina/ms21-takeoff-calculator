@@ -1,0 +1,220 @@
+<Window x:Class="MS21TakeoffCalculator.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="clr-namespace:MS21TakeoffCalculator.Models"
+        Title="MS-21 Takeoff Calculator"
+        MinWidth="920"
+        MinHeight="620"
+        Width="1080"
+        Height="720"
+        Background="#DCE5EE">
+  <Window.Resources>
+    <Style x:Key="PanelBorder" TargetType="Border">
+      <Setter Property="Background" Value="#F7FAFC" />
+      <Setter Property="BorderBrush" Value="#B7C2CE" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="18" />
+    </Style>
+
+    <Style x:Key="IcaoTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+      <Style.Triggers>
+        <DataTrigger Binding="{Binding IsIcaoInvalid}" Value="True">
+          <Setter Property="BorderBrush" Value="#C62828" />
+          <Setter Property="BorderThickness" Value="2" />
+          <Setter Property="Background" Value="#FFF1F1" />
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
+
+    <DataTemplate DataType="{x:Type models:Runway}">
+      <TextBlock Text="{Binding RunwayName}" />
+    </DataTemplate>
+  </Window.Resources>
+
+  <Grid Margin="24">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <DockPanel Grid.Row="0" Margin="0,0,0,18">
+      <TextBlock Text="MS-21 TAKEOFF CALCULATOR"
+                 FontSize="25"
+                 FontWeight="Bold"
+                 Foreground="#102033"
+                 DockPanel.Dock="Left" />
+      <TextBlock Text="{Binding StatusMessage}"
+                 FontSize="16"
+                 FontWeight="SemiBold"
+                 Foreground="#C62828"
+                 HorizontalAlignment="Right"
+                 DockPanel.Dock="Right" />
+    </DockPanel>
+
+    <Grid Grid.Row="1">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="1.15*" />
+        <ColumnDefinition Width="0.85*" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+
+      <Border Grid.Row="0" Grid.Column="0" Margin="0,0,12,12" Style="{StaticResource PanelBorder}">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+          <TextBlock Text="AIRPORT DEPARTURE" Style="{StaticResource SectionTitle}" />
+          <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="150" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="ICAO" Margin="0,0,12,10" />
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Icao, UpdateSourceTrigger=PropertyChanged}" CharacterCasing="Upper" MaxLength="4" Margin="0,0,0,10" Style="{StaticResource IcaoTextBox}" />
+
+            <TextBlock Grid.Row="1" Text="Abbreviation" Margin="0,0,12,10" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AirportAbbreviation}" Margin="0,0,0,10" Style="{StaticResource ReadonlyTextBox}" />
+
+            <TextBlock Grid.Row="2" Text="Name" Margin="0,0,12,10" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding AirportName}" Margin="0,0,0,10" Style="{StaticResource ReadonlyTextBox}" />
+
+            <TextBlock Grid.Row="3" Text="RWY" Margin="0,0,12,10" />
+            <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding AvailableRunways}" SelectedItem="{Binding SelectedRunway}" Margin="0,0,0,10" />
+
+            <TextBlock Grid.Row="4" Text="Length RWY" Margin="0,0,12,10" />
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding RunwayLength}" Margin="0,0,0,10" Style="{StaticResource ReadonlyTextBox}" />
+
+            <TextBlock Grid.Row="5" Text="Slope" Margin="0,0,12,0" />
+            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding RunwaySlope}" Style="{StaticResource ReadonlyTextBox}" />
+          </Grid>
+        </Grid>
+      </Border>
+
+      <Border Grid.Row="0" Grid.Column="1" Margin="12,0,0,12" Style="{StaticResource PanelBorder}">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+          <TextBlock Text="WEATHER" Style="{StaticResource SectionTitle}" />
+          <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="120" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="WIND / KT" Margin="0,0,12,12" />
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Wind, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+            <TextBlock Grid.Row="1" Text="OAT C" Margin="0,0,12,12" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Oat, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+            <TextBlock Grid.Row="2" Text="QNH HPA" Margin="0,0,12,0" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Qnh, UpdateSourceTrigger=PropertyChanged}" />
+          </Grid>
+        </Grid>
+      </Border>
+
+      <Border Grid.Row="1" Grid.Column="0" Margin="0,12,12,0" Style="{StaticResource PanelBorder}">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+          <TextBlock Text="AIRCRAFT" Style="{StaticResource SectionTitle}" />
+          <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="150" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="TOW (T)" Margin="0,0,12,12" />
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Tow, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+            <TextBlock Grid.Row="1" Text="CG" Margin="0,0,12,12" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Cg, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+            <TextBlock Grid.Row="2" Text="CONF" Margin="0,0,12,0" />
+            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Configurations}" SelectedItem="{Binding SelectedConfiguration}" />
+          </Grid>
+        </Grid>
+      </Border>
+
+      <Border Grid.Row="1" Grid.Column="1" Margin="12,12,0,0" Style="{StaticResource PanelBorder}">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+          <TextBlock Text="RESULTS" Style="{StaticResource SectionTitle}" />
+          <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="90" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="V1" Margin="0,0,12,12" />
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding V1}" Margin="0,0,0,12" Style="{StaticResource ReadonlyTextBox}" />
+
+            <TextBlock Grid.Row="1" Text="VR" Margin="0,0,12,12" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Vr}" Margin="0,0,0,12" Style="{StaticResource ReadonlyTextBox}" />
+
+            <TextBlock Grid.Row="2" Text="V2" Margin="0,0,12,12" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding V2}" Margin="0,0,0,12" Style="{StaticResource ReadonlyTextBox}" />
+
+            <TextBlock Grid.Row="3" Text="THS" Margin="0,0,12,0" />
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Ths}" Style="{StaticResource ReadonlyTextBox}" />
+          </Grid>
+        </Grid>
+      </Border>
+    </Grid>
+
+    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+      <Button Content="RESET"
+              Command="{Binding ResetCommand}"
+              Width="130"
+              Height="42"
+              Margin="0,0,12,0"
+              Background="#E7EDF3"
+              BorderBrush="#9AAABC" />
+      <Button Content="COMPUTE"
+              Command="{Binding ComputeCommand}"
+              Width="150"
+              Height="42"
+              Background="#1F5E8C"
+              Foreground="White"
+              BorderBrush="#17496D" />
+    </StackPanel>
+  </Grid>
+</Window>
