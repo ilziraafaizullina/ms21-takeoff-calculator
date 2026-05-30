@@ -25,16 +25,24 @@ public partial class MainViewModel : ObservableObject
         _calculationService = calculationService;
         _messageBoxService = messageBoxService;
 
+        AvailableIcaos = _airportService.GetAvailableIcaos();
         Configurations =
         [
             FileSelectionService.Flaps1F,
             FileSelectionService.Flaps2
         ];
+
+        QnhOptions = ["0", "1000", "2000"];
     }
 
     public ObservableCollection<Runway> AvailableRunways { get; } = [];
+    public ObservableCollection<string> OatOptions { get; } = [];
+    public ObservableCollection<string> TowOptions { get; } = [];
+    public ObservableCollection<string> CgOptions { get; } = [];
 
+    public IReadOnlyList<string> AvailableIcaos { get; }
     public IReadOnlyList<string> Configurations { get; }
+    public IReadOnlyList<string> QnhOptions { get; }
 
     [ObservableProperty]
     private string? icao;
@@ -53,6 +61,9 @@ public partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     private string? runwaySlope;
+
+    [ObservableProperty]
+    private string? correctedRunwayLength;
 
     [ObservableProperty]
     private string? wind;
@@ -130,7 +141,39 @@ public partial class MainViewModel : ObservableObject
         ClearResults();
         RunwayLength = value?.LengthM.ToString(CultureInfo.InvariantCulture);
         RunwaySlope = value?.SlopePercent.ToString("0.##", CultureInfo.InvariantCulture);
+        RefreshCorrectedRunwayLength();
+        RefreshTowOptions();
     }
+
+    partial void OnSelectedConfigurationChanged(string? value)
+    {
+        ClearResults();
+        RefreshOatOptions();
+        RefreshCgOptions();
+    }
+
+    partial void OnQnhChanged(string? value)
+    {
+        ClearResults();
+        RefreshOatOptions();
+    }
+
+    partial void OnOatChanged(string? value)
+    {
+        ClearResults();
+        RefreshTowOptions();
+    }
+
+    partial void OnWindChanged(string? value)
+    {
+        ClearResults();
+        RefreshCorrectedRunwayLength();
+        RefreshTowOptions();
+    }
+
+    partial void OnTowChanged(string? value) => ClearResults();
+
+    partial void OnCgChanged(string? value) => ClearResults();
 
     [RelayCommand]
     private void Compute()
@@ -177,6 +220,7 @@ public partial class MainViewModel : ObservableObject
         SelectedRunway = null;
         RunwayLength = null;
         RunwaySlope = null;
+        CorrectedRunwayLength = null;
         Wind = null;
         Oat = null;
         Qnh = null;
@@ -186,6 +230,9 @@ public partial class MainViewModel : ObservableObject
         StatusMessage = null;
         IsIcaoInvalid = false;
         AvailableRunways.Clear();
+        OatOptions.Clear();
+        TowOptions.Clear();
+        CgOptions.Clear();
         ClearResults();
     }
 
@@ -218,6 +265,8 @@ public partial class MainViewModel : ObservableObject
         {
             ICAO = Icao?.Trim().ToUpperInvariant() ?? string.Empty,
             Runway = SelectedRunway.RunwayName,
+            RunwayLengthM = SelectedRunway.LengthM,
+            RunwaySlopePercent = SelectedRunway.SlopePercent,
             WindKt = wind,
             OatC = oat,
             QnhHpa = qnh,
@@ -245,5 +294,81 @@ public partial class MainViewModel : ObservableObject
         Vr = null;
         V2 = null;
         Ths = null;
+    }
+
+    private void RefreshOatOptions()
+    {
+        var currentOat = Oat;
+        Oat = null;
+        Tow = null;
+        OatOptions.Clear();
+        TowOptions.Clear();
+
+        foreach (var oat in _calculationService.GetAvailableOats(SelectedConfiguration, Qnh))
+        {
+            OatOptions.Add(oat.ToString("0", CultureInfo.InvariantCulture));
+        }
+
+        if (currentOat is not null && OatOptions.Contains(currentOat))
+        {
+            Oat = currentOat;
+        }
+    }
+
+    private void RefreshTowOptions()
+    {
+        var currentTow = Tow;
+        Tow = null;
+        TowOptions.Clear();
+
+        var wind = TryParseDecimal(Wind, out var parsedWind) ? parsedWind : (decimal?)null;
+        foreach (var tow in _calculationService.GetAvailableTows(
+            SelectedConfiguration,
+            Qnh,
+            Oat,
+            SelectedRunway?.LengthM,
+            SelectedRunway?.SlopePercent,
+            wind))
+        {
+            TowOptions.Add(tow.ToString("0.0", CultureInfo.InvariantCulture));
+        }
+
+        if (currentTow is not null && TowOptions.Contains(currentTow))
+        {
+            Tow = currentTow;
+        }
+    }
+
+    private void RefreshCgOptions()
+    {
+        var currentCg = Cg;
+        Cg = null;
+        CgOptions.Clear();
+
+        foreach (var cg in _calculationService.GetAvailableCgs(SelectedConfiguration))
+        {
+            CgOptions.Add(cg.ToString("0.0", CultureInfo.InvariantCulture));
+        }
+
+        if (currentCg is not null && CgOptions.Contains(currentCg))
+        {
+            Cg = currentCg;
+        }
+    }
+
+    private void RefreshCorrectedRunwayLength()
+    {
+        if (SelectedRunway is null || !TryParseDecimal(Wind, out var wind))
+        {
+            CorrectedRunwayLength = null;
+            return;
+        }
+
+        var corrected = _calculationService.CalculateCorrectedRunwayLength(
+            SelectedRunway.LengthM,
+            SelectedRunway.SlopePercent,
+            wind);
+
+        CorrectedRunwayLength = corrected.ToString("0.#", CultureInfo.InvariantCulture);
     }
 }

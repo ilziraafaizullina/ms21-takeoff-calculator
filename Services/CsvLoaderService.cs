@@ -30,6 +30,9 @@ public sealed class CsvLoaderService
     public IReadOnlyList<SpeedRecord> LoadSpeedRecords(string path) =>
         LoadRecords<SpeedRecord>(path);
 
+    public IReadOnlyList<WindSlopeCorrection> LoadWindSlopeCorrections(string path) =>
+        LoadRecords<WindSlopeCorrection>(path);
+
     public void EnsureReadable(string path)
     {
         using var reader = new StreamReader(path);

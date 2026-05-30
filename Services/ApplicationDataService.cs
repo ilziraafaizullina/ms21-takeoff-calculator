@@ -14,8 +14,7 @@ public sealed class ApplicationDataService
         "speed_2_1000ft.csv",
         "speed_2_2000ft.csv",
         "ths_flaps_1f.csv",
-        "ths_flaps_2.csv",
-        "wind_slope_corrections.csv"
+        "ths_flaps_2.csv"
     ];
 
     private static readonly string[] SpeedFiles =
@@ -51,6 +50,7 @@ public sealed class ApplicationDataService
 
         var airports = _csvLoaderService.LoadAirports(Path.Combine(rawRoot, "airports.csv"));
         var runways = _csvLoaderService.LoadRunways(Path.Combine(rawRoot, "runways.csv"));
+        var windSlopeCorrections = _csvLoaderService.LoadWindSlopeCorrections(Path.Combine(rawRoot, "wind_slope_corrections.csv"));
 
         foreach (var fileName in RawReferenceFiles)
         {
@@ -67,7 +67,7 @@ public sealed class ApplicationDataService
             fileName => _csvLoaderService.LoadThsRecords(Path.Combine(preparedRoot, fileName)),
             StringComparer.OrdinalIgnoreCase);
 
-        return new ApplicationData(airports, runways, speedTables, thsTables);
+        return new ApplicationData(airports, runways, windSlopeCorrections, speedTables, thsTables);
     }
 
     private static string ResolveDataRoot(string configuredPath)
@@ -101,5 +101,6 @@ public sealed class ApplicationDataService
 public sealed record ApplicationData(
     IReadOnlyList<Airport> Airports,
     IReadOnlyList<Runway> Runways,
+    IReadOnlyList<WindSlopeCorrection> WindSlopeCorrections,
     IReadOnlyDictionary<string, IReadOnlyList<SpeedRecord>> SpeedTables,
     IReadOnlyDictionary<string, IReadOnlyList<ThsRecord>> ThsTables);

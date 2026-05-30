@@ -13,6 +13,9 @@ public sealed class AirportService
             StringComparer.OrdinalIgnoreCase);
     }
 
+    public IReadOnlyList<string> GetAvailableIcaos() =>
+        _airportsByIcao.Keys.Order(StringComparer.OrdinalIgnoreCase).ToList();
+
     public Airport? FindByIcao(string icao)
     {
         if (string.IsNullOrWhiteSpace(icao))

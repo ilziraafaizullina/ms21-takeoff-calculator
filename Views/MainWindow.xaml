@@ -17,7 +17,7 @@
       <Setter Property="Padding" Value="18" />
     </Style>
 
-    <Style x:Key="IcaoTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+    <Style x:Key="IcaoComboBox" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
       <Style.Triggers>
         <DataTrigger Binding="{Binding IsIcaoInvalid}" Value="True">
           <Setter Property="BorderBrush" Value="#C62828" />
@@ -82,10 +82,11 @@
               <RowDefinition Height="Auto" />
               <RowDefinition Height="Auto" />
               <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Text="ICAO" Margin="0,0,12,10" />
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Icao, UpdateSourceTrigger=PropertyChanged}" CharacterCasing="Upper" MaxLength="4" Margin="0,0,0,10" Style="{StaticResource IcaoTextBox}" />
+            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding AvailableIcaos}" SelectedItem="{Binding Icao}" Margin="0,0,0,10" Style="{StaticResource IcaoComboBox}" />
 
             <TextBlock Grid.Row="1" Text="Abbreviation" Margin="0,0,12,10" />
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AirportAbbreviation}" Margin="0,0,0,10" Style="{StaticResource ReadonlyTextBox}" />
@@ -100,7 +101,10 @@
             <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding RunwayLength}" Margin="0,0,0,10" Style="{StaticResource ReadonlyTextBox}" />
 
             <TextBlock Grid.Row="5" Text="Slope" Margin="0,0,12,0" />
-            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding RunwaySlope}" Style="{StaticResource ReadonlyTextBox}" />
+            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding RunwaySlope}" Margin="0,0,0,10" Style="{StaticResource ReadonlyTextBox}" />
+
+            <TextBlock Grid.Row="6" Text="Corrected RWY" Margin="0,0,12,0" />
+            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding CorrectedRunwayLength}" Style="{StaticResource ReadonlyTextBox}" />
           </Grid>
         </Grid>
       </Border>
@@ -127,10 +131,10 @@
             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Wind, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
 
             <TextBlock Grid.Row="1" Text="OAT C" Margin="0,0,12,12" />
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Oat, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding OatOptions}" SelectedItem="{Binding Oat}" Margin="0,0,0,12" />
 
             <TextBlock Grid.Row="2" Text="QNH HPA" Margin="0,0,12,0" />
-            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Qnh, UpdateSourceTrigger=PropertyChanged}" />
+            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding QnhOptions}" SelectedItem="{Binding Qnh}" />
           </Grid>
         </Grid>
       </Border>
@@ -154,10 +158,10 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Text="TOW (T)" Margin="0,0,12,12" />
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Tow, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding TowOptions}" SelectedItem="{Binding Tow}" Margin="0,0,0,12" />
 
             <TextBlock Grid.Row="1" Text="CG" Margin="0,0,12,12" />
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Cg, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding CgOptions}" SelectedItem="{Binding Cg}" Margin="0,0,0,12" />
 
             <TextBlock Grid.Row="2" Text="CONF" Margin="0,0,12,0" />
             <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Configurations}" SelectedItem="{Binding SelectedConfiguration}" />

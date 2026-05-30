@@ -22,7 +22,11 @@ public partial class MainWindow : Window
             DataContext = new MainViewModel(
                 new AirportService(data.Airports),
                 new RunwayService(data.Runways),
-                new PerformanceCalculationService(data.SpeedTables, data.ThsTables, fileSelectionService),
+                new PerformanceCalculationService(
+                    data.SpeedTables,
+                    data.ThsTables,
+                    data.WindSlopeCorrections,
+                    fileSelectionService),
                 messageBoxService);
         }
         catch (Exception exception)
